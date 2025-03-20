@@ -48,3 +48,24 @@
 - **Data Quality**: Investigate potential data leakage (e.g., duplicates) in `processed_bongo_scam.csv` to ensure realistic performance.
 - **Feature Reduction**: Lower `max_features` (e.g., 1000) to reduce overfitting risk.
 - **Cross-Validation**: Use k-fold cross-validation to validate the model’s generalization.
+
+
+### Transformer Model: AfroXLMR
+- **Approach**: Fine-tuned `Davlan/afro-xlmr-base` on a 10% subset (~150 samples: ~120 train, ~30 test) with batch size 8 and 1 epoch. Applied dynamic padding (max_length=50) to handle short SMS texts efficiently. Used 1 GB RAM + 8 GB swap to manage memory limits.
+- **Performance**: Achieved an F1-score of 0.7083 on the test set (~30 samples). The confusion matrix (saved as `transformer_confusion_matrix.png`) showed: 0 true `trust` predicted correctly, 14 true `trust` misclassified as `scam`, 17 true `scam` predicted correctly, and 0 true `scam` misclassified as `trust`.
+- **Insight**: AfroXLMR predicted all samples as `scam`, likely due to the small dataset and class imbalance (17 `scam` vs. 14 `trust` in test set). Despite this, the F1-score of 0.7083 indicates decent `scam` detection, but it missed all `trust` messages. Training took ~22 minutes due to swap usage, much slower than expected on a machine with more RAM.
+
+## Ethical Considerations
+- **Bias**: The model’s tendency to predict everything as `scam` could lead to false positives, flagging legitimate messages and causing user frustration.
+- **Small Data Risk**: Using only 10% of the data risks missing diverse patterns, reducing reliability in real-world use.
+- **Resource Use**: Swap-based training (8 GB) is slow and disk-intensive, raising concerns about energy efficiency for low-resource environments.
+- **Privacy**: Assumed `processed_bongo_scam.csv` is anonymized, as SMS data can be sensitive.
+
+
+## 2.3 Comparison
+- **F1-Score**: The baseline achieved a perfect F1-score of 1.0000 on ~302 test samples, while AfroXLMR scored 0.7083 on ~30 test samples. The baseline’s perfect score is likely due to data leakage or overfitting, making AfroXLMR’s score more realistic despite the smaller test set.
+- **Confusion Matrix**:
+  - **Baseline**: Perfect classification (91 `trust`, 211 `scam`, no errors), but potentially unrealistic.
+  - **AfroXLMR**: Missed all `trust` samples (0 correct), correctly identified 14 `scam`, but misclassified 17 `scam` as `trust`. Small data limited its ability to learn `trust` patterns.
+- **Speed vs. Accuracy**: The baseline is fast and simple but may not generalize. AfroXLMR is slower (swap-dependent) but better suited for Swahili SMS due to its language understanding.
+- **Scalability**: AfroXLMR on the full dataset (1508 samples, 3 epochs) was estimated at ~102 hours, impractical without more RAM, while the baseline scaled easily.

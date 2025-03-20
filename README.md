@@ -50,8 +50,8 @@ Top unigrams, bigrams, and sample `'scam'` messages were analyzed to identify th
 
 
 ## 2. Model Development
- ### 2.1 Baseline Model: TF-IDF + Logistic Regression 
-## Approach
+ ## 2.1 Baseline Model: TF-IDF + Logistic Regression 
+### Approach
 
 
 #### Implementation
@@ -76,7 +76,35 @@ Top unigrams, bigrams, and sample `'scam'` messages were analyzed to identify th
 ## Future Work
 - **Data Validation**: Investigate data leakage in `processed_bongo_scam.csv` to ensure realistic performance.
 - **Feature Engineering**: Experiment with lower `max_features` or n-grams to reduce overfitting.
-- **Model Alternatives**: Test other lightweight models (e.g., SVM, Naive Bayes) for comparison.
+- **Model Alternatives**: Test other lightweight models for comparison.
+
+
+## 2.2 Transformer Model: AfroXLMR
+### Approach
+
+#### Implementation
+- **Data Preparation**: Used a small 10% chunk of the data (~150 samples: ~120 to train, ~30 to test) because the full data (1508 samples) took too long to train. Split the data 80% for training and 20% for testing.
+- **Model Choice**: Picked `Davlan/afro-xlmr-base` because it’s pre-trained on African languages like Swahili, making it better for our SMS messages than mBERT (which doesn’t know Swahili well).
+- **Text Setup**: Turned SMS messages into numbers using a tokenizer, keeping them short (max length 50 words) to save space, since SMS messages aren’t long.
+- **Training**: Trained AfroXLMR to read 8 messages at a time (batch size 8) for 1 full round (1 epoch), which took ~15 steps and ~22 minutes. Saved the results like a chart to see how well it did.
+
+#### Results
+- **F1-Score**: Got a score of 0.7083 (about 71% correct) on the ~30 test messages, meaning it’s pretty good at spotting scams but not perfect.
+- **Confusion Matrix**: Saved as `transformer_confusion_matrix.png`:
+  - Out of 14 real `trust` messages, it guessed 0 as `trust` and 14 as `scam` (all wrong).
+  - Out of 17 real `scam` messages, it guessed 17 as `scam` and 0 as `trust` (all right).
+- **What This Means**: The model guessed everything as `scam`, so it caught all the scams but missed all the safe messages. This might be because we used a small amount of data, and there were more `scam` messages (17) than `trust` (14) in the test set.
+
+#### Setbacks and Solutions
+- **RAM Problem**: My laptop only had 1 GB of free RAM, which is tiny. AfroXLMR is big (~500 MB) and needed more space (~3 GB total) to train, so it kept crashing.
+- **Swap Solution**: I added 8 GB of swap space, which is like borrowing extra space from my laptop’s storage (206 GB free). This let me train AfroXLMR without crashing, but it was slow (~22 minutes) because the swap isn’t as fast as the desk (RAM).
+- **Time Problem**: Training the full data (1508 samples) for 3 rounds was going to take ~102 hours (over 4 days!), so I used only 10% of the data to make it faster (~22 minutes).
+
+## Future Work
+- **More RAM**: Get a laptop with more RAM (like 4-8 GB free) to train faster without swap.
+- **Full Data**: Use all 1508 samples to get better results, maybe an F1-score of ~0.8-0.9.
+- **More Rounds**: Train for 2-3 rounds (epochs) to help AfroXLMR learn better.
+- **Explain Predictions**: Add tools to show why AfroXLMR made its guesses, so users can trust it more.
 
 
 
