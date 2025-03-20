@@ -32,3 +32,19 @@
 - **Bias in Data**: The imbalance (66% scam) may bias models toward over-predicting scams, potentially flagging legitimate messages (false positives).  
 - **Privacy**: SMS data includes phone numbers (e.g., "0657538690"), raising concerns about anonymization in real-world use.  
 - **Cultural Sensitivity**: Patterns like "freemason" or "tiba asili" may reflect local beliefs; mislabeling them could offend users or miss context.
+
+
+### Baseline Model: TF-IDF + Logistic Regression
+- **Approach**: Implemented TF-IDF vectorization (`max_features=5000`) to convert Swahili SMS texts into numerical features, followed by Logistic Regression with `class_weight='balanced'` to address class imbalance. Hyperparameter optimization was performed using `GridSearchCV` to tune the model.
+- **Performance**: Achieved an F1-score of 1.0000 on the test set (~302 samples). The confusion matrix (saved as `baseline_confusion_matrix.png`) showed perfect classification: 91 true `trust` and 211 true `scam` samples, with no misclassifications.
+- **Insight**: The perfect F1-score suggests either an overly simplistic dataset or overfitting due to high `max_features`. While the model is fast and effective as a baseline, its performance may not generalize to new, unseen data. The balanced class weighting successfully mitigated the moderate imbalance (`trust`: 91, `scam`: 211 in test set).
+
+## Ethical Considerations
+- **Bias and Generalization**: The perfect F1-score raises concerns about overfitting or data leakage, which could lead to poor performance on real-world SMS data, potentially missing scams and affecting user trust.
+- **Privacy**: Assumed that `processed_bongo_scam.csv` is anonymized to protect user identities, as SMS data can contain sensitive information.
+- **Fairness**: While `class_weight='balanced'` addressed imbalance, over-reliance on a small dataset risks biased predictions if the training data doesn’t represent diverse scam patterns.
+
+## Recommendations
+- **Data Quality**: Investigate potential data leakage (e.g., duplicates) in `processed_bongo_scam.csv` to ensure realistic performance.
+- **Feature Reduction**: Lower `max_features` (e.g., 1000) to reduce overfitting risk.
+- **Cross-Validation**: Use k-fold cross-validation to validate the model’s generalization.

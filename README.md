@@ -48,3 +48,36 @@ Top unigrams, bigrams, and sample `'scam'` messages were analyzed to identify th
   2. **Instructions Involving Phone Numbers**: Frequent use of "namba" and "kwenye," often as "kwenye namba."  
   3. **Bait with Vague Promises**: Use of "jina" in phrases like "jina litakuja" or lures like "tiba asili."
 
+
+## 2. Model Development
+ ### 2.1 Baseline Model: TF-IDF + Logistic Regression 
+## Approach
+
+
+#### Implementation
+- **Data Preparation**: Loaded `processed_bongo_scam.csv` (1508 samples) and mapped labels (`trust`: 0, `scam`: 1). Split into 80% training (~1206 samples) and 20% testing (~302 samples) using `train_test_split` with `random_state=42`.
+- **Feature Extraction**: Applied `TfidfVectorizer` (`max_features=5000`) to convert cleaned SMS texts into numerical features, capturing word importance.
+- **Model Training**: Trained a `LogisticRegression` model with `class_weight='balanced'` to handle class imbalance (`trust` < `scam`) and `max_iter=1000` for convergence.
+- **Hyperparameter Optimization**: Used `GridSearchCV` to tune the model, optimizing for F1-score (specific parameters tuned not shown but included in `baseline_model.ipynb`).
+
+#### Results
+- **F1-Score**: Achieved a perfect F1-score of 1.0000 on the test set (~302 samples), indicating flawless classification.
+- **Confusion Matrix**: Visualized in `baseline_confusion_matrix.png`:
+  - True `trust` → Predicted `trust`: 91
+  - True `trust` → Predicted `scam`: 0
+  - True `scam` → Predicted `trust`: 0
+  - True `scam` → Predicted `scam`: 211
+- **Analysis**: The perfect F1-score suggests potential data leakage (e.g., duplicates in the dataset) or overfitting due to high `max_features`. While the model performed exceptionally on the test set, its generalization to new data may be limited.
+
+#### Setbacks and Solutions
+- **Class Imbalance**: The dataset had more `scam` (211) than `trust` (91) samples in the test set. Addressed by setting `class_weight='balanced'` in Logistic Regression, ensuring the model didn’t favor the majority class.
+- **Hardware Constraints**: Although the baseline model trained quickly (~seconds) and fit within 1 GB RAM, this constraint became a significant challenge for the transformer model (detailed below).
+
+## Future Work
+- **Data Validation**: Investigate data leakage in `processed_bongo_scam.csv` to ensure realistic performance.
+- **Feature Engineering**: Experiment with lower `max_features` or n-grams to reduce overfitting.
+- **Model Alternatives**: Test other lightweight models (e.g., SVM, Naive Bayes) for comparison.
+
+
+
+
