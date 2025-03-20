@@ -110,7 +110,7 @@ Top unigrams, bigrams, and sample `'scam'` messages were analyzed to identify th
 ## Explainability & Insights
 
 #### Influential Features for Scam Detection
-- **Visualization**: Using the baseline model (TF-IDF + Logistic Regression), I identified the top 10 words that most strongly predict `scam` messages. These are visualized in `scam_top-words.png`. The key words and their importance scores are:
+- **Visualization**: I identified the top 10 words that most strongly predict `scam` messages. These are visualized in `scam_top-words.png`. The key words and their importance scores are:
   - `namba`: 461
   - `jina`: 460
   - `kwenye`: 378
