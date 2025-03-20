@@ -109,9 +109,19 @@ Top unigrams, bigrams, and sample `'scam'` messages were analyzed to identify th
 
 ## Explainability & Insights
 
-### Influential Features for Scam Detection
-- **Visualization**: Using the baseline model, I found the top 10 words that most strongly predict `scam` messages (visualized in `top_scam_words.png`). Key words include `freemason`, `karibu`, `biashara`, `pesa`, and `namba`.
-- **What It Means**: These words show what scams often talk about—fake groups (`freemason`), friendly greetings (`karibu`), business offers (`biashara`), and requests for money (`pesa`) or phone numbers (`namba`).
+#### Influential Features for Scam Detection
+- **Visualization**: Using the baseline model (TF-IDF + Logistic Regression), I identified the top 10 words that most strongly predict `scam` messages. These are visualized in `scam_top-words.png`. The key words and their importance scores are:
+  - `namba`: 461
+  - `jina`: 460
+  - `kwenye`: 378
+  - `iyo`: 247
+  - `pesa`: 204
+  - `piga`: 152
+  - `hela`: 135
+  - `nitumie`: 130
+  - `yako`: 124
+  - `ela`: 117
+- **What It Means**: These words show common scam tactics in Swahili SMS. For example, `namba` (number) and `jina` (name) suggest scams often ask for personal details. Words like `pesa` (money), `hela` (cash), and `nitumie` (send me) point to requests for payments, while `kwenye` (to/at) and `iyo` (that) are often used in phrases directing users to send money (e.g., "naomba unitumie iyo hela kwenye namba...").
 
 ### False Positives Analysis
 - **Baseline**: There were no false positives (0 `trust` messages marked as `scam`), probably because the model overlearned the data or the dataset was too easy.
@@ -122,7 +132,7 @@ Top unigrams, bigrams, and sample `'scam'` messages were analyzed to identify th
 - **How They Work**: These messages sound urgent and pushy, asking users to act fast (e.g., "naomba unitumie iyo hela kwenye namba...").
 
 ### Recommendations for Tanzanian Telecom Companies
-1. **Block Suspicious Messages**: Stop SMS with scam words like `freemason`, `ndoto`, or `unitumie`, or messages asking for money or numbers, so they don’t reach users.
+1. **Block Suspicious Messages**: Stop SMS with scam words like `namba`, `hela`, or `unitumie`, or messages asking for money or numbers, so they don’t reach users.
 2. **Warn Users**: Send alerts to users when they get a suspicious SMS, teaching them how to spot scams and stay safe.
 
 
