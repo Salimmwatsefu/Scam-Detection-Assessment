@@ -11,36 +11,36 @@ The dataset used is the "Swahili SMS Detection Dataset" by Henry Dioniz, sourced
 ## 1. Data Exploration & Preprocessing
 
 ### 1.1 Loading the Dataset and Initial Inspection
-**Approach**:  
+**Approach** 
 The dataset was loaded using Pandas to examine its structure, column names, class distribution, and to check for missing values.
 
-**Results**:  
+**Results**
 - **Sample Data**: The dataset includes columns `'Category'` (labels: `'scam'` or `'trust'`) and `'Sms'` (message text). Example entries show `'scam'` messages with commands and `'trust'` messages with polite tones.  
 - **Columns**: `['Category', 'Sms']`.  
 - **Class Distribution**: 1000 `'scam'` messages (66%) and 508 `'trust'` messages (34%), indicating a class imbalance.  
 - **Missing Values**: None found, ensuring data completeness.
 
 ### 1.2 Text Preprocessing
-**Approach**:  
+**Approach**  
 The `'Sms'` column was preprocessed by converting text to lowercase, removing punctuation and numbers, tokenizing into words, and filtering out a basic set of Swahili stopwords. A new column, `'cleaned_sms'`, was created with the processed text.
 
-**Results**:  
+**Results**
 - **Sample Preprocessed Data**: Original messages like "IYO PESA ITUME KWENYE NAMBA HII 0657538690" became "iyo pesa itume kwenye namba jina italeta magom...", with numbers and punctuation removed and stopwords filtered.  
 - Preprocessing preserved key terms like "pesa" (money) and "namba" (number) while reducing noise.
 
 ### 1.3 Exploratory Visualizations
-**Approach**:  
+**Approach**  
 A word cloud was generated for `'scam'` messages to visualize frequent terms, and a bar plot was created to show the top 10 words in `'scam'` messages.
 
-**Results**:  
+**Results**  
 - **Word Cloud**: Saved as `scam_wordcloud.png` in `reports/visualizations/`. Prominent terms include "namba," "jina," and "pesa."  
 - **Top Words Bar Plot**: Saved as `scam_top_words.png`. Top words are "namba" (461), "jina" (460), "kwenye" (378), "iyo" (247), "pesa" (204), and others, highlighting scam-related vocabulary.
 
 ### 1.4 Linguistic Patterns in Scam Messages
-**Approach**:  
+**Approach**  
 Top unigrams, bigrams, and sample `'scam'` messages were analyzed to identify three unique linguistic patterns distinguishing `'scam'` from `'trust'` messages.
 
-**Results**:  
+**Results** 
 - **Top Words in Scam**: "namba" (461), "jina" (460), "kwenye" (378), "iyo" (247), "pesa" (204), "piga" (152), "hela" (135), "nitumie" (130), "yako" (124), "ela" (117).  
 - **Top Bigrams in Scam**: "kwenye namba" (128), "namba jina" (115), "nitumie kwenye" (105), "jina litakuja" (95), "iyo hela" (83), etc.  
 - **Patterns Identified**:  
@@ -105,6 +105,25 @@ Top unigrams, bigrams, and sample `'scam'` messages were analyzed to identify th
 - **Full Data**: Use all 1508 samples to get better results, maybe an F1-score of ~0.8-0.9.
 - **More Rounds**: Train for 2-3 rounds (epochs) to help AfroXLMR learn better.
 - **Explain Predictions**: Add tools to show why AfroXLMR made its guesses, so users can trust it more.
+
+
+## Explainability & Insights
+
+### Influential Features for Scam Detection
+- **Visualization**: Using the baseline model, I found the top 10 words that most strongly predict `scam` messages (visualized in `top_scam_words.png`). Key words include `freemason`, `karibu`, `biashara`, `pesa`, and `namba`.
+- **What It Means**: These words show what scams often talk about—fake groups (`freemason`), friendly greetings (`karibu`), business offers (`biashara`), and requests for money (`pesa`) or phone numbers (`namba`).
+
+### False Positives Analysis
+- **Baseline**: There were no false positives (0 `trust` messages marked as `scam`), probably because the model overlearned the data or the dataset was too easy.
+- **AfroXLMR**: All 14 `trust` messages were wrongly marked as `scam`. This happened because I only used a small dataset (~150 samples), so the model didn’t see enough `trust` examples to learn their patterns. Also, some `trust` messages (like "nipigie baada saa moja tafadhali") might use words like "tafadhali" that scams also use, confusing the model.
+
+### Scam Message Patterns in Swahili SMS
+- **Patterns**: Scams often use friendly words (`karibu`, `ndoto`), promise big things (`biashara`), and ask for money (`pesa`) or personal info (`namba`, `airtel`).
+- **How They Work**: These messages sound urgent and pushy, asking users to act fast (e.g., "naomba unitumie iyo hela kwenye namba...").
+
+### Recommendations for Tanzanian Telecom Companies
+1. **Block Suspicious Messages**: Stop SMS with scam words like `freemason`, `ndoto`, or `unitumie`, or messages asking for money or numbers, so they don’t reach users.
+2. **Warn Users**: Send alerts to users when they get a suspicious SMS, teaching them how to spot scams and stay safe.
 
 
 
